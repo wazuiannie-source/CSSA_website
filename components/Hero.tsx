@@ -1,6 +1,20 @@
+'use client'
 import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 
 export default function Hero() {
+  const imgRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function onScroll() {
+      if (imgRef.current) {
+        imgRef.current.style.transform = `translateY(${window.scrollY * 0.25}px)`
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <section style={{
       minHeight: '100vh',
@@ -54,7 +68,9 @@ export default function Hero() {
 
       {/* Right - Image */}
       <div style={{ position: 'relative', margin: '60px 80px 60px 8px', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 24px 72px rgba(24,18,12,0.15)', border: '1px solid rgba(200,151,58,0.35)' }}>
-        <Image src="/image7.jpg" alt="UCI CSSA" fill style={{ objectFit: 'cover' }} />
+        <div ref={imgRef} style={{ position: 'absolute', inset: '-20%', transition: 'none' }}>
+          <Image src="/image7.jpg" alt="UCI CSSA" fill style={{ objectFit: 'cover' }} />
+        </div>
         {/* Badge */}
         <div style={{ position: 'absolute', bottom: '28px', left: '24px', background: 'white', borderRadius: '12px', padding: '14px 18px', boxShadow: '0 12px 36px rgba(24,18,12,0.14)', borderLeft: '3px solid #D42B2B', maxWidth: '200px' }}>
           <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#D42B2B', marginBottom: '4px' }}>年度盛典</div>

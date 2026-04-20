@@ -17,3 +17,14 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { background: var(--cream); color: var(--ink); overflow-x: hidden; font-family: sans-serif; }
+
+/* Scroll entrance animations */
+.fade-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

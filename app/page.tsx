@@ -11,6 +11,7 @@ import Sponsors from '@/components/Sponsors'
 import Partners from '@/components/Partners'
 import Footer from '@/components/Footer'
 import IntroAnimation from '@/components/IntroAnimation'
+import ScrollReveal from '@/components/ScrollReveal'
 
 export default function Home() {
   const [introDone, setIntroDone] = useState(() => {
@@ -25,13 +26,13 @@ export default function Home() {
       {!introDone && <IntroAnimation onDone={() => { sessionStorage.setItem('introDone', 'true'); setIntroDone(true) }} />}
       <Navbar />
       <Hero />
-      <About />
-      <Events />
-      <Team />
-      <Join />
-      <Services />
-      <Sponsors />
-      <Partners />
+      <ScrollReveal><About /></ScrollReveal>
+      <ScrollReveal delay={100}><Events /></ScrollReveal>
+      <ScrollReveal delay={100}><Team /></ScrollReveal>
+      <ScrollReveal delay={100}><Join /></ScrollReveal>
+      <ScrollReveal delay={100}><Services /></ScrollReveal>
+      <ScrollReveal delay={100}><Sponsors /></ScrollReveal>
+      <ScrollReveal delay={100}><Partners /></ScrollReveal>
       <Footer />
     </main>
   )

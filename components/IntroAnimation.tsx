@@ -49,7 +49,7 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
   }, [onDone])
 
   // Logo starts small+faint, grows to full over 5.45s as images converge
-  const logoOpacity = phase === 'scatter' ? 0.15 : phase === 'gather' ? 1 : phase === 'logo' || phase === 'fade' ? 1 : 0
+  const logoOpacity = phase === 'scatter' ? 0 : phase === 'gather' ? 1 : phase === 'logo' || phase === 'fade' ? 1 : 0
   const logoScale = phase === 'scatter' ? 0.2 : phase === 'gather' ? 1 : phase === 'logo' ? 1 : phase === 'fade' ? 1.05 : 0.2
 
   return (
