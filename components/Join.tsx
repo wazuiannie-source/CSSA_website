@@ -39,12 +39,12 @@ export default function Join() {
           {/* Channels */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: '70%' }}>
             {[
-              { icon: '💬', name: '微信公众号', handle: 'UCI-CSSA' },
-              { icon: '📸', name: 'Instagram', handle: '@uci_cssa' },
-              { icon: '🌸', name: '小红书', handle: 'UCI_CSSA' },
-              { icon: '✉️', name: '邮箱联系', handle: 'ucicssazotzot@gmail.com' },
+              { icon: '💬', name: '微信公众号', handle: 'UCI-CSSA', href: 'https://mp.weixin.qq.com/s/pgl5zEOw-oG5NmkOJ9HNNQ' },
+              { icon: '📸', name: 'Instagram', handle: '@uci_cssa', href: 'https://www.instagram.com/ucicssa?igsh=NTc4MTIwNjQ2YQ==' },
+              { icon: '🌸', name: '小红书', handle: 'UCI_CSSA', href: 'https://xhslink.com/m/9qYitZKxsI3' },
+              { icon: '✉️', name: '邮箱联系', handle: 'ucicssazotzot@gmail.com', href: 'mailto:ucicssazotzot@gmail.com' },
             ].map((ch) => (
-              <div key={ch.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'white', border: '1.5px solid rgba(24,18,12,0.14)', borderRadius: '10px', height: '64px' }}>
+              <a key={ch.name} href={ch.href} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'white', border: '1.5px solid rgba(24,18,12,0.14)', borderRadius: '10px', height: '64px', textDecoration: 'none' }}>
                 <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#FDF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', flexShrink: 0 }}>
                   {ch.icon}
                 </div>
@@ -52,7 +52,7 @@ export default function Join() {
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#18120C', whiteSpace: 'nowrap' }}>{ch.name}</div>
                   <div style={{ fontSize: '10px', color: 'rgba(24,18,12,0.45)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ch.handle}</div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
 

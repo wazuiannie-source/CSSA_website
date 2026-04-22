@@ -16,6 +16,7 @@ export default function Hero() {
       />
 
       {/* Overlay */}
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(24,18,12,0.85) 0%, rgba(24,18,12,0.1) 50%, rgba(24,18,12,0.3) 100%)' }} />
 
       {/* Top — title */}
@@ -46,7 +47,7 @@ export default function Hero() {
       {/* Bottom — subtitle + buttons + label */}
       <div style={{ position: 'relative', zIndex: 10, padding: '0 44px 44px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
 
-        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.9, textAlign: 'center', margin: 0 }}>
+        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.9)', lineHeight: 1.9, textAlign: 'center', margin: 0 }}>
           在异乡，我们是彼此的家园。<br />
           <span style={{ fontSize: '13px', letterSpacing: '0.04em' }}>Chinese Students &amp; Scholars Association · UC Irvine</span>
         </p>

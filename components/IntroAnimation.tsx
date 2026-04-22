@@ -3,10 +3,13 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 const PHOTOS = [
-  '/image1.jpg', '/image2.jpg', '/image3.jpg',
-  '/image7.jpg', '/image8.jpg', '/image9.jpg',
-  '/image10.jpg', '/image1.jpg', '/image2.jpg', '/image3.jpg',
-  '/image7.jpg', '/image8.jpg',
+  '/image1.jpg', '/image2.jpg', '/image3.jpg', '/image7.jpg',
+  '/image8.jpg', '/image9.jpg', '/image10.jpg',
+  '/yearbooks/2425/1.png', '/yearbooks/2425/3.png', '/yearbooks/2425/5.png',
+  '/yearbooks/2425/8.png', '/yearbooks/2425/12.png', '/yearbooks/2425/15.png',
+  '/yearbooks/2425/18.png', '/yearbooks/2425/20.png', '/yearbooks/2425/22.png',
+  '/yearbooks/2425/25.png', '/yearbooks/2425/28.png', '/yearbooks/2425/30.png',
+  '/yearbooks/2425/33.png',
 ]
 
 interface Tile {

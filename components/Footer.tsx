@@ -47,9 +47,9 @@ export default function Footer() {
             {
               title: '关注我们',
               links: [
-                { label: '微信公众号', href: '#' },
-                { label: 'Instagram', href: '#' },
-                { label: '小红书', href: '#' },
+                { label: '微信公众号', href: 'https://mp.weixin.qq.com/s/pgl5zEOw-oG5NmkOJ9HNNQ' },
+                { label: 'Instagram', href: 'https://www.instagram.com/ucicssa?igsh=NTc4MTIwNjQ2YQ==' },
+                { label: '小红书', href: 'https://xhslink.com/m/9qYitZKxsI3' },
                 { label: 'Discord', href: '#' },
               ],
             },
