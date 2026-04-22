@@ -3,17 +3,10 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 const PHOTOS = [
-  '/image1.jpg', '/image2.jpg', '/image3.jpg',
-  '/image7.jpg', '/image8.jpg', '/image9.jpg',
-  '/image10.jpg', '/image1.jpg', '/image2.jpg', '/image3.jpg',
-  '/image7.jpg', '/image8.jpg',
-]
-
-// 12 non-overlapping positions arranged in a 4×3 collage across the screen
-const DESTINATIONS = [
-  { tx: '11%', ty: '14%' }, { tx: '33%', ty: '10%' }, { tx: '56%', ty: '13%' }, { tx: '80%', ty: '11%' },
-  { tx: '20%', ty: '46%' }, { tx: '42%', ty: '50%' }, { tx: '65%', ty: '44%' }, { tx: '87%', ty: '48%' },
-  { tx: '10%', ty: '78%' }, { tx: '33%', ty: '82%' }, { tx: '57%', ty: '76%' }, { tx: '80%', ty: '80%' },
+  '/image1.jpg', '/image2.jpg', '/image3.jpg', '/image7.jpg',
+  '/image8.jpg', '/image9.jpg', '/image10.jpg',
+  '/yearbooks/2425/3.png', '/yearbooks/2425/8.png', '/yearbooks/2425/15.png',
+  '/yearbooks/2425/22.png', '/yearbooks/2425/30.png',
 ]
 
 interface Tile {
@@ -21,9 +14,8 @@ interface Tile {
   src: string
   sx: string
   sy: string
-  tx: string
-  ty: string
   delay: number
+  size: number
 }
 
 type Phase = 'scatter' | 'gather' | 'logo' | 'fade'
@@ -43,9 +35,8 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
       id: i,
       src,
       ...randomEdge(),
-      tx: DESTINATIONS[i].tx,
-      ty: DESTINATIONS[i].ty,
       delay: i * 0.15,
+      size: 180 + Math.floor(Math.random() * 100),
     }))
   )
   const [phase, setPhase] = useState<Phase>('scatter')
@@ -53,10 +44,11 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     setTimeout(() => setPhase('gather'), 200)
     setTimeout(() => setPhase('logo'), 5800)
-    setTimeout(() => setPhase('fade'), 6300)
+    setTimeout(() => setPhase('fade'), 6300)   // 0.5s after logo is full size
     setTimeout(() => onDone(), 8200)
   }, [onDone])
 
+  // Logo starts small+faint, grows to full over 5.45s as images converge
   const logoOpacity = phase === 'scatter' ? 0 : phase === 'gather' ? 1 : phase === 'logo' || phase === 'fade' ? 1 : 0
   const logoScale = phase === 'scatter' ? 0.2 : phase === 'gather' ? 1 : phase === 'logo' ? 1 : phase === 'fade' ? 1.05 : 0.2
 
@@ -77,19 +69,21 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
           key={t.id}
           style={{
             position: 'absolute',
-            width: 180,
-            height: 180,
+            width: t.size,
+            height: t.size,
             borderRadius: '12px',
             overflow: 'hidden',
-            left: phase === 'scatter' ? t.sx : t.tx,
-            top: phase === 'scatter' ? t.sy : t.ty,
-            transform: 'translate(-50%, -50%)',
+            left: phase === 'scatter' ? t.sx : '50%',
+            top: phase === 'scatter' ? t.sy : '50%',
+            transform: phase === 'scatter'
+              ? 'translate(-50%, -50%) scale(1.8)'
+              : 'translate(-50%, -50%) scale(0.08)',
             opacity: phase === 'scatter' ? 0
               : phase === 'gather' ? 1
               : phase === 'logo' ? 0
               : 0,
             transition: phase === 'gather'
-              ? `left 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, top 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, opacity 1.4s ease ${t.delay}s`
+              ? `left 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, top 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, transform 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, opacity 1.4s ease ${t.delay}s`
               : phase === 'logo'
               ? 'opacity 2s ease'
               : 'none',
@@ -100,7 +94,7 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
         </div>
       ))}
 
-      {/* Logo */}
+      {/* Logo — starts as ghost, grows clear as images arrive */}
       <div style={{
         position: 'absolute',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
