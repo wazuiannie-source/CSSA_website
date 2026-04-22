@@ -72,6 +72,7 @@ export default function JoinPage() {
   const [resume, setResume] = useState<string | null>(null)
   const [firstChoice, setFirstChoice] = useState<string | null>(null)
   const [secondChoice, setSecondChoice] = useState<string | null>(null)
+  const [grade, setGrade] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [bgIndex, setBgIndex] = useState(0)
 
@@ -215,15 +216,18 @@ export default function JoinPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <label style={labelStyle}>年级 · Current Grade <span style={{ color: '#D42B2B' }}>*</span></label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
-              {['大一 · Freshman', '大二 · Sophomore', '大三 · Junior', '大四+ · Senior+'].map((g) => (
-                <label key={g} style={{ cursor: 'pointer' }}>
-                  <input type="radio" name="grade" required style={{ display: 'none' }} />
-                  <div style={{ padding: '12px 8px', borderRadius: '8px', textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer', transition: 'all 0.2s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(200,151,58,0.4)'; (e.currentTarget as HTMLDivElement).style.color = '#E4C06A' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLDivElement).style.color = 'rgba(255,255,255,0.6)' }}
-                  >{g}</div>
-                </label>
-              ))}
+              {['大一 · Freshman', '大二 · Sophomore', '大三 · Junior', '大四+ · Senior+'].map((g) => {
+                const isSelected = grade === g
+                return (
+                  <div key={g} onClick={() => setGrade(g)} style={{
+                    padding: '12px 8px', borderRadius: '8px', textAlign: 'center', fontSize: '12px',
+                    color: isSelected ? '#E4C06A' : 'rgba(255,255,255,0.6)',
+                    background: isSelected ? 'rgba(200,151,58,0.12)' : 'rgba(255,255,255,0.03)',
+                    border: isSelected ? '1.5px solid rgba(200,151,58,0.6)' : '1px solid rgba(255,255,255,0.08)',
+                    cursor: 'pointer', transition: 'all 0.2s', fontWeight: isSelected ? 700 : 400,
+                  }}>{g}</div>
+                )
+              })}
             </div>
           </div>
 
