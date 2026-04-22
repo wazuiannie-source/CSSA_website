@@ -38,7 +38,7 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
       id: i,
       src,
       ...randomEdge(),
-      delay: i * 0.15,
+      delay: 0,
       size: 180 + Math.floor(Math.random() * 100),
     }))
   )
@@ -46,14 +46,13 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     setTimeout(() => setPhase('gather'), 200)
-    setTimeout(() => setPhase('logo'), 5800)
-    setTimeout(() => setPhase('fade'), 6300)   // 0.5s after logo is full size
-    setTimeout(() => onDone(), 8200)
+    setTimeout(() => setPhase('logo'), 4200)   // after all images arrive (200 + 3600 + buffer)
+    setTimeout(() => setPhase('fade'), 5800)
+    setTimeout(() => onDone(), 7200)
   }, [onDone])
 
-  // Logo starts small+faint, grows to full over 5.45s as images converge
-  const logoOpacity = phase === 'scatter' ? 0 : phase === 'gather' ? 1 : phase === 'logo' || phase === 'fade' ? 1 : 0
-  const logoScale = phase === 'scatter' ? 0.2 : phase === 'gather' ? 1 : phase === 'logo' ? 1 : phase === 'fade' ? 1.05 : 0.2
+  const logoOpacity = phase === 'scatter' || phase === 'gather' ? 0 : phase === 'logo' ? 1 : 0
+  const logoScale = phase === 'scatter' || phase === 'gather' ? 0.6 : phase === 'logo' ? 1 : 1.05
 
   return (
     <div style={{
@@ -86,7 +85,7 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
               : phase === 'logo' ? 0
               : 0,
             transition: phase === 'gather'
-              ? `left 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, top 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, transform 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, opacity 1.4s ease ${t.delay}s`
+              ? `left 3.6s cubic-bezier(0.4,0,1,0.9), top 3.6s cubic-bezier(0.4,0,1,0.9), transform 3.6s cubic-bezier(0.4,0,1,0.9), opacity 0.8s ease`
               : phase === 'logo'
               ? 'opacity 2s ease'
               : 'none',
@@ -103,10 +102,8 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
         opacity: logoOpacity,
         transform: `scale(${logoScale})`,
-        transition: phase === 'gather'
-          ? 'opacity 5.45s ease, transform 5.45s cubic-bezier(0.7,0,0.95,1)'
-          : phase === 'logo'
-          ? 'none'
+        transition: phase === 'logo'
+          ? 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.2,0,0,1)'
           : 'opacity 1.4s ease',
         zIndex: 2,
       }}>
