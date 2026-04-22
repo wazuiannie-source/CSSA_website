@@ -3,13 +3,10 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 const PHOTOS = [
-  '/image1.jpg', '/image2.jpg', '/image3.jpg', '/image7.jpg',
-  '/image8.jpg', '/image9.jpg', '/image10.jpg',
-  '/yearbooks/2425/1.png', '/yearbooks/2425/3.png', '/yearbooks/2425/5.png',
-  '/yearbooks/2425/8.png', '/yearbooks/2425/12.png', '/yearbooks/2425/15.png',
-  '/yearbooks/2425/18.png', '/yearbooks/2425/20.png', '/yearbooks/2425/22.png',
-  '/yearbooks/2425/25.png', '/yearbooks/2425/28.png', '/yearbooks/2425/30.png',
-  '/yearbooks/2425/33.png',
+  '/image1.jpg', '/image2.jpg', '/image3.jpg',
+  '/image7.jpg', '/image8.jpg', '/image9.jpg',
+  '/image10.jpg', '/image1.jpg', '/image2.jpg', '/image3.jpg',
+  '/image7.jpg', '/image8.jpg',
 ]
 
 interface Tile {
@@ -38,7 +35,7 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
       id: i,
       src,
       ...randomEdge(),
-      delay: 0,
+      delay: i * 0.15,
       size: 180 + Math.floor(Math.random() * 100),
     }))
   )
@@ -46,13 +43,14 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
 
   useEffect(() => {
     setTimeout(() => setPhase('gather'), 200)
-    setTimeout(() => setPhase('logo'), 4200)   // after all images arrive (200 + 3600 + buffer)
-    setTimeout(() => setPhase('fade'), 5800)
-    setTimeout(() => onDone(), 7200)
+    setTimeout(() => setPhase('logo'), 5800)
+    setTimeout(() => setPhase('fade'), 6300)   // 0.5s after logo is full size
+    setTimeout(() => onDone(), 8200)
   }, [onDone])
 
-  const logoOpacity = phase === 'scatter' || phase === 'gather' ? 0 : phase === 'logo' ? 1 : 0
-  const logoScale = phase === 'scatter' || phase === 'gather' ? 0.6 : phase === 'logo' ? 1 : 1.05
+  // Logo starts small+faint, grows to full over 5.45s as images converge
+  const logoOpacity = phase === 'scatter' ? 0 : phase === 'gather' ? 1 : phase === 'logo' || phase === 'fade' ? 1 : 0
+  const logoScale = phase === 'scatter' ? 0.2 : phase === 'gather' ? 1 : phase === 'logo' ? 1 : phase === 'fade' ? 1.05 : 0.2
 
   return (
     <div style={{
@@ -85,7 +83,7 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
               : phase === 'logo' ? 0
               : 0,
             transition: phase === 'gather'
-              ? `left 3.6s cubic-bezier(0.4,0,1,0.9), top 3.6s cubic-bezier(0.4,0,1,0.9), transform 3.6s cubic-bezier(0.4,0,1,0.9), opacity 0.8s ease`
+              ? `left 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, top 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, transform 3.6s cubic-bezier(0.4,0,1,0.9) ${t.delay}s, opacity 1.4s ease ${t.delay}s`
               : phase === 'logo'
               ? 'opacity 2s ease'
               : 'none',
@@ -102,8 +100,10 @@ export default function IntroAnimation({ onDone }: { onDone: () => void }) {
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
         opacity: logoOpacity,
         transform: `scale(${logoScale})`,
-        transition: phase === 'logo'
-          ? 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.2,0,0,1)'
+        transition: phase === 'gather'
+          ? 'opacity 5.45s ease, transform 5.45s cubic-bezier(0.7,0,0.95,1)'
+          : phase === 'logo'
+          ? 'none'
           : 'opacity 1.4s ease',
         zIndex: 2,
       }}>
