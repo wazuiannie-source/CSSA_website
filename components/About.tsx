@@ -48,18 +48,21 @@ export default function About() {
             ))}
           </div>
 
-          {/* Feature cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {/* Feature list */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             {[
-              { icon: '🎓', title: '新生与在校支持', desc: '选课、住宿、交通答疑，快速适应 UCI 生活' },
-              { icon: '🎭', title: '文化活动与社交', desc: '春晚、节庆，让中华文化在海外延续' },
-              { icon: '💼', title: '职业发展支持', desc: '峰会、实习资源，助力职业起步' },
-              { icon: '🌐', title: '社区与跨文化连接', desc: '搭建中美文化交流平台，连接多元社区' },
-            ].map((card) => (
-              <div key={card.title} style={{ background: '#FDFAF5', border: '1.5px solid rgba(24,18,12,0.14)', borderRadius: '12px', padding: '22px 20px' }}>
-                <div style={{ fontSize: '22px', marginBottom: '10px' }}>{card.icon}</div>
-                <div style={{ fontFamily: 'serif', fontSize: '14px', fontWeight: 700, marginBottom: '5px' }}>{card.title}</div>
-                <div style={{ fontSize: '12px', color: 'rgba(24,18,12,0.45)', lineHeight: 1.7 }}>{card.desc}</div>
+              { title: '新生与在校支持', desc: '选课、住宿、交通答疑，快速适应 UCI 生活' },
+              { title: '文化活动与社交', desc: '春晚、节庆，让中华文化在海外延续' },
+              { title: '职业发展支持', desc: '峰会、实习资源，助力职业起步' },
+              { title: '社区与跨文化连接', desc: '搭建中美文化交流平台，连接多元社区' },
+            ].map((item, i, arr) => (
+              <div key={item.title} style={{ display: 'flex', alignItems: 'baseline', gap: '16px', padding: '18px 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(24,18,12,0.08)' : 'none' }}>
+                <div style={{ width: '20px', height: '1.5px', background: '#C8973A', flexShrink: 0, marginTop: '10px' }} />
+                <div style={{ fontSize: '13px', lineHeight: 1.8 }}>
+                  <span style={{ fontFamily: 'serif', fontSize: '17px', fontWeight: 800, color: '#18120C' }}>{item.title}</span>
+                  <span style={{ color: 'rgba(24,18,12,0.3)', margin: '0 8px' }}>—</span>
+                  <span style={{ color: 'rgba(24,18,12,0.45)' }}>{item.desc}</span>
+                </div>
               </div>
             ))}
           </div>

@@ -1,81 +1,86 @@
 'use client'
 import Image from 'next/image'
-import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 
 export default function Hero() {
-  const imgRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function onScroll() {
-      if (imgRef.current) {
-        imgRef.current.style.transform = `translateY(${window.scrollY * 0.25}px)`
-      }
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
   return (
-    <section style={{
-      minHeight: '100vh',
-      paddingTop: '64px',
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      background: '#FDFAF5',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+    <section style={{ position: 'relative', minHeight: '100vh', paddingTop: '68px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden' }}>
 
-      {/* Background watermark logo */}
-      <div style={{ position: 'absolute', right: '-5%', top: '50%', transform: 'translateY(-50%)', width: '70vw', height: '70vw', zIndex: 1, pointerEvents: 'none', userSelect: 'none' }}>
-        <Image src="/logo.PNG" alt="" fill style={{ objectFit: 'contain', opacity: 0.045 }} />
-      </div>
+      {/* Full background image */}
+      <Image
+        src="/image2.jpg"
+        alt="UCI CSSA"
+        fill
+        style={{ objectFit: 'cover', objectPosition: 'center' }}
+        priority
+      />
 
-      {/* Left - Text */}
-      <div style={{ padding: '0 5vw 0 10vw', display: 'flex', alignItems: 'center' }}>
-        <div style={{ width: '100%' }}>
+      {/* Overlay */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(24,18,12,0.85) 0%, rgba(24,18,12,0.1) 50%, rgba(24,18,12,0.3) 100%)' }} />
 
-          <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C8973A', marginBottom: '36px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ width: '20px', height: '1.5px', background: '#C8973A', display: 'inline-block' }}></span>
-            加州大学欧文分校 · Est. 1990
-          </div>
+      {/* Top — title */}
+      <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '100px 44px 0' }}>
+        <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: '#E4C06A', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+          <span style={{ width: '20px', height: '1.5px', background: '#E4C06A', display: 'inline-block' }} />
+          UCI CSSA · Est. 1990
+          <span style={{ width: '20px', height: '1.5px', background: '#E4C06A', display: 'inline-block' }} />
+        </div>
 
-          <h1 style={{ fontFamily: 'serif', fontSize: 'clamp(40px, 6vw, 90px)', fontWeight: 900, lineHeight: 1.02, letterSpacing: '-0.03em', marginBottom: '16px' }}>
-            <span style={{ color: '#A81515' }}>中国学生</span><br />学者联合会
-          </h1>
+        <h1 style={{ fontFamily: 'serif', fontSize: 'clamp(40px, 6vw, 84px)', fontWeight: 900, color: 'white', lineHeight: 1.05, marginBottom: '16px', animation: 'heroFadeIn 1.2s ease forwards', opacity: 0, textShadow: '2px 4px 16px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5)' }}>
+          University of California, <span style={{ color: '#E4C06A' }}>Irvine</span><br /><span style={{ color: '#D42B2B' }}>中国</span>学生学者联合会
+        </h1>
+        <style>{`
+          @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
 
-          <p style={{ fontSize: 'clamp(13px, 1.2vw, 17px)', color: 'rgba(24,18,12,0.4)', marginBottom: '36px', lineHeight: 1.5 }}>
-            Chinese Students and Scholars Association at UCI
-          </p>
-
-          <div style={{ width: '56px', height: '2px', background: 'linear-gradient(to right, #D42B2B, #C8973A)', borderRadius: '1px', marginBottom: '36px' }}></div>
-
-          <p style={{ fontSize: 'clamp(13px, 1vw, 16px)', lineHeight: 1.85, color: 'rgba(24,18,12,0.65)', maxWidth: '420px', marginBottom: '48px' }}>
-            服务中国留学生学者群体，弘扬中华文化，促进中美文化交流，打造 UCI 华人的温暖之家。
-          </p>
-
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <a href="/join" style={{ background: '#D42B2B', color: 'white', padding: '16px 40px', borderRadius: '8px', textDecoration: 'none', fontSize: '15px', fontWeight: 700, textAlign: 'center' }}>
-              加入我们 →
-            </a>
-            <a href="#sponsors" style={{ border: '1.5px solid rgba(24,18,12,0.14)', color: 'rgba(24,18,12,0.7)', padding: '16px 40px', borderRadius: '8px', textDecoration: 'none', fontSize: '15px', fontWeight: 600, textAlign: 'center' }}>
-              赞助合作
-            </a>
-          </div>
-
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+          <div style={{ height: '2px', width: '40px', background: '#D42B2B' }} />
+          <div style={{ height: '6px', width: '6px', borderRadius: '50%', background: '#D42B2B' }} />
+          <div style={{ height: '2px', width: '40px', background: '#D42B2B' }} />
         </div>
       </div>
 
-      {/* Right - Image */}
-      <div style={{ position: 'relative', margin: '60px 80px 60px 8px', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 24px 72px rgba(24,18,12,0.15)', border: '1px solid rgba(200,151,58,0.35)' }}>
-        <div ref={imgRef} style={{ position: 'absolute', inset: '-20%', transition: 'none' }}>
-          <Image src="/image7.jpg" alt="UCI CSSA" fill style={{ objectFit: 'cover' }} />
+      {/* Bottom — subtitle + buttons + label */}
+      <div style={{ position: 'relative', zIndex: 10, padding: '0 44px 44px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+
+        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.9, textAlign: 'center', margin: 0 }}>
+          在异乡，我们是彼此的家园。<br />
+          <span style={{ fontSize: '13px', letterSpacing: '0.04em' }}>Chinese Students &amp; Scholars Association · UC Irvine</span>
+        </p>
+
+        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <Link href="/join" style={{
+            background: '#D42B2B', color: 'white',
+            padding: '15px 44px', borderRadius: '6px',
+            textDecoration: 'none', fontSize: '14px', fontWeight: 700, letterSpacing: '0.03em',
+          }}>
+            加入我们 →
+          </Link>
+          <a href="/yearbook" style={{
+            border: '1.5px solid rgba(255,255,255,0.25)', color: 'rgba(255,255,255,0.85)',
+            padding: '15px 40px', borderRadius: '6px',
+            textDecoration: 'none', fontSize: '14px', fontWeight: 600,
+            backdropFilter: 'blur(8px)', background: 'rgba(255,255,255,0.08)',
+          }}>
+            了解更多
+          </a>
         </div>
-        {/* Badge */}
-        <div style={{ position: 'absolute', bottom: '28px', left: '24px', background: 'white', borderRadius: '12px', padding: '14px 18px', boxShadow: '0 12px 36px rgba(24,18,12,0.14)', borderLeft: '3px solid #D42B2B', maxWidth: '200px' }}>
-          <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#D42B2B', marginBottom: '4px' }}>年度盛典</div>
-          <div style={{ fontFamily: 'serif', fontSize: '13px', fontWeight: 700, marginBottom: '2px' }}>UCI CSSA 春晚</div>
-          <div style={{ fontSize: '11px', color: 'rgba(24,18,12,0.45)' }}>Irvine Barclay Theatre</div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '3px', height: '36px', background: '#D42B2B', borderRadius: '2px' }} />
+            <div>
+              <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: '3px' }}>社区活动</div>
+              <div style={{ fontFamily: 'serif', fontSize: '15px', fontWeight: 700, color: 'white' }}>UCI CSSA 篮球赛</div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+            <div style={{ fontSize: '9px', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', writingMode: 'vertical-rl' }}>Scroll</div>
+            <div style={{ width: '1px', height: '48px', background: 'linear-gradient(to bottom, rgba(255,255,255,0.3), transparent)' }} />
+          </div>
         </div>
       </div>
 

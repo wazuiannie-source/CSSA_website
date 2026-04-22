@@ -16,7 +16,7 @@ export default function Events() {
               每一场活动<br />都是印记
             </h2>
           </div>
-          <a href="#team" style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(24,18,12,0.45)', textDecoration: 'none' }}>
+          <a href="/yearbook" style={{ fontSize: '13px', fontWeight: 700, color: '#D42B2B', textDecoration: 'none', border: '1.5px solid #D42B2B', padding: '10px 22px', borderRadius: '6px', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
             查看全部相册 →
           </a>
         </div>

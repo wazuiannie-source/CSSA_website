@@ -25,11 +25,9 @@ export default function Navbar() {
       {/* Links */}
       <ul style={{ display: 'flex', gap: '2px', listStyle: 'none', margin: 0, padding: 0, marginLeft: 'auto', marginRight: '24px' }}>
         {[
-          { href: '#about', label: '关于我们' },
           { href: '#events', label: '活动' },
-          { href: '#team', label: '团队' },
-          { href: '#join', label: '加入' },
-          { href: '#services', label: '服务' },
+          { href: '/member', label: 'Member' },
+          { href: '/yearbook', label: '年鉴' },
         ].map((link) => (
           <li key={link.href}>
             <a href={link.href} style={{
