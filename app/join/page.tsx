@@ -69,13 +69,16 @@ const departments = [
 ]
 
 export default function JoinPage() {
-  const [resume, setResume] = useState<string | null>(null)
+  const [resumeFile, setResumeFile] = useState<File | null>(null)
   const [firstChoice, setFirstChoice] = useState<string | null>(null)
   const [secondChoice, setSecondChoice] = useState<string | null>(null)
   const [grade, setGrade] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [bgIndex, setBgIndex] = useState(0)
 
+  const resume = resumeFile?.name ?? null
   const selected = firstChoice
   const selectedDept = departments.find(d => d.value === firstChoice) ?? null
 
@@ -89,12 +92,37 @@ export default function JoinPage() {
 
   function handleResume(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (file) setResume(file.name)
+    if (file) setResumeFile(file)
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setSubmitted(true)
+    if (!grade || !firstChoice) return
+    setLoading(true)
+    setError(null)
+
+    const form = e.currentTarget
+    const data = new FormData()
+    data.append('name', (form.elements.namedItem('name') as HTMLInputElement).value)
+    data.append('major', (form.elements.namedItem('major') as HTMLInputElement).value)
+    data.append('email', (form.elements.namedItem('email') as HTMLInputElement).value)
+    data.append('wechat', (form.elements.namedItem('wechat') as HTMLInputElement).value)
+    data.append('grade', grade)
+    data.append('firstChoice', firstChoice)
+    if (secondChoice) data.append('secondChoice', secondChoice)
+    data.append('statement', (form.elements.namedItem('statement') as HTMLTextAreaElement).value)
+    if (resumeFile) data.append('resume', resumeFile)
+
+    try {
+      const res = await fetch('/api/apply', { method: 'POST', body: data })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Submission failed')
+      setSubmitted(true)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -192,11 +220,11 @@ export default function JoinPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <label style={labelStyle}>姓名 · Full Name <span style={{ color: '#D42B2B' }}>*</span></label>
-              <input required type="text" placeholder="Your full name" style={inputStyle} />
+              <input required type="text" name="name" placeholder="Your full name" style={inputStyle} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <label style={labelStyle}>专业 · Major <span style={{ color: '#D42B2B' }}>*</span></label>
-              <input required type="text" placeholder="e.g. Computer Science" style={inputStyle} />
+              <input required type="text" name="major" placeholder="e.g. Computer Science" style={inputStyle} />
             </div>
           </div>
 
@@ -204,11 +232,11 @@ export default function JoinPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <label style={labelStyle}>邮箱 · Email <span style={{ color: '#D42B2B' }}>*</span></label>
-              <input required type="email" placeholder="your@email.com" style={inputStyle} />
+              <input required type="email" name="email" placeholder="your@email.com" style={inputStyle} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <label style={labelStyle}>微信号 · WeChat ID <span style={{ color: '#D42B2B' }}>*</span></label>
-              <input required type="text" placeholder="Your WeChat ID" style={inputStyle} />
+              <input required type="text" name="wechat" placeholder="Your WeChat ID" style={inputStyle} />
             </div>
           </div>
 
@@ -304,7 +332,7 @@ export default function JoinPage() {
                   <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>PDF, DOC, or DOCX</div>
                 </div>
                 {resume && (
-                  <button type="button" onClick={(e) => { e.preventDefault(); setResume(null) }} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+                  <button type="button" onClick={(e) => { e.preventDefault(); setResumeFile(null) }} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '16px' }}>✕</button>
                 )}
               </div>
             </label>
@@ -317,12 +345,19 @@ export default function JoinPage() {
             <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', lineHeight: 1.7, marginBottom: '4px' }}>
               Please address the following: (1) relevant experience or skills, (2) what you bring to this department, (3) your goals within CSSA.
             </div>
-            <textarea required rows={7} placeholder="e.g. I have 2 years of experience in event planning and social media management. I believe I can contribute by... My goal is to..." style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.7' }} />
+            <textarea required name="statement" rows={7} placeholder="e.g. I have 2 years of experience in event planning and social media management. I believe I can contribute by... My goal is to..." style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.7' }} />
           </div>
 
+          {/* Error */}
+          {error && (
+            <div style={{ padding: '14px 16px', borderRadius: '8px', background: 'rgba(212,43,43,0.1)', border: '1px solid rgba(212,43,43,0.3)', fontSize: '13px', color: '#ff6b6b' }}>
+              {error}
+            </div>
+          )}
+
           {/* Submit */}
-          <button type="submit" style={{ background: 'linear-gradient(110deg, #C8973A, #E4C06A)', color: '#18120C', padding: '16px', borderRadius: '10px', border: 'none', fontSize: '15px', fontWeight: 800, cursor: 'pointer', letterSpacing: '0.02em' }}>
-            提交申请 · Submit Application →
+          <button type="submit" disabled={loading} style={{ background: loading ? 'rgba(200,151,58,0.4)' : 'linear-gradient(110deg, #C8973A, #E4C06A)', color: '#18120C', padding: '16px', borderRadius: '10px', border: 'none', fontSize: '15px', fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.02em' }}>
+            {loading ? '提交中… · Submitting…' : '提交申请 · Submit Application →'}
           </button>
 
         </form>

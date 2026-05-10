@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(git checkout *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/member/%E5%94%90%E6%A6%AD%E9%9B%A8Angelina.png\")",
+      "Bash(npm install *)",
+      "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa remote -v)",
+      "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa add -A)",
+      "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa status)"
+    ]
+  }
+}

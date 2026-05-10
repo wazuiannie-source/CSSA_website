@@ -26,8 +26,9 @@ export default function Navbar() {
       <ul style={{ display: 'flex', gap: '2px', listStyle: 'none', margin: 0, padding: 0, marginLeft: 'auto', marginRight: '24px' }}>
         {[
           { href: '#events', label: '活动' },
-          { href: '/member', label: 'Member' },
+          { href: '/member', label: '成员中心' },
           { href: '/yearbook', label: '年鉴' },
+          { href: '/yearbook/album', label: '新生相册' },
         ].map((link) => (
           <li key={link.href}>
             <a href={link.href} style={{
