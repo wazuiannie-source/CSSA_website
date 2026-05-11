@@ -28,14 +28,17 @@ export default function Navbar() {
           { href: '#events', label: '活动' },
           { href: '/member', label: '成员中心' },
           { href: '/yearbook', label: '年鉴' },
-          { href: '/yearbook/album', label: '新生相册' },
+          { href: 'https://docs.google.com/forms/d/e/1FAIpQLSdJs49CxIZViE3s_3DIuDADzpz5gggO_TUWHjS18UPnFjjWKQ/viewform', label: '新生相册' },
         ].map((link) => (
           <li key={link.href}>
-            <a href={link.href} style={{
-              fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.65)',
-              textDecoration: 'none', padding: '8px 18px', borderRadius: '100px', display: 'block',
-              letterSpacing: '0.02em',
-            }}>
+            <a href={link.href}
+              target={link.href.startsWith('http') ? '_blank' : undefined}
+              rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+              style={{
+                fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.65)',
+                textDecoration: 'none', padding: '8px 18px', borderRadius: '100px', display: 'block',
+                letterSpacing: '0.02em',
+              }}>
               {link.label}
             </a>
           </li>
