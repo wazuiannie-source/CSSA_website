@@ -10,8 +10,7 @@
       "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa add -A)",
       "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa status)",
       "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa commit -m ' *)",
-      "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa push origin main)",
-      "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa remote set-url origin https://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@github.com/wazuiannie-source/CSSA_website.git)"
+      "Bash(git -C /Users/a81804/Desktop/CSSA/uci-cssa push origin main)"
     ]
   }
 }
