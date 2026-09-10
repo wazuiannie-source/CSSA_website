@@ -19,6 +19,37 @@ const departmentLabels: Record<string, string> = {
   sports:     '体育部 · Sports',
 }
 
+const MAX_RESUME_BYTES = 4 * 1024 * 1024
+
+/**
+ * Uploads via an Apps Script web app running as the Drive owner. The service
+ * account cannot do this itself — service accounts have no storage quota, so
+ * creating files in a personal Drive folder always fails.
+ */
+async function uploadResume(file: File): Promise<string> {
+  const url = process.env.APPS_SCRIPT_UPLOAD_URL
+  const secret = process.env.APPS_SCRIPT_SECRET
+  if (!url || !secret) throw new Error('Resume upload is not configured')
+
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      secret,
+      filename: file.name,
+      mimeType: file.type || 'application/octet-stream',
+      data: buffer.toString('base64'),
+    }),
+  })
+
+  if (!res.ok) throw new Error(`Resume upload failed (${res.status})`)
+
+  const result = await res.json()
+  if (!result.ok) throw new Error(`Resume upload failed: ${result.error}`)
+  return result.url as string
+}
+
 function getAuth() {
   return new google.auth.GoogleAuth({
     credentials: {
@@ -50,18 +81,20 @@ export async function POST(request: NextRequest) {
     const firstChoice  = formData.get('firstChoice') as string
     const secondChoice = formData.get('secondChoice') as string | null
     const statement    = formData.get('statement') as string
-    const resumeLink   = ((formData.get('resumeLink') as string | null) ?? '').trim()
+    const resumeFile   = formData.get('resume') as File | null
 
     if (!name || !major || !email || !wechat || !grade || !firstChoice || !statement) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    if (resumeLink && !/^https?:\/\//i.test(resumeLink)) {
-      return Response.json({ error: '简历链接需以 http:// 或 https:// 开头 · Resume link must start with http:// or https://' }, { status: 400 })
+    if (resumeFile && resumeFile.size > MAX_RESUME_BYTES) {
+      return Response.json({ error: '简历文件过大（上限 4MB）· Resume must be under 4MB' }, { status: 400 })
     }
 
     const firstLabel = departmentLabels[firstChoice] ?? firstChoice
     const secondLabel = secondChoice ? (departmentLabels[secondChoice] ?? secondChoice) : ''
+
+    const resumeUrl = resumeFile && resumeFile.size > 0 ? await uploadResume(resumeFile) : ''
 
     // Append application to Google Sheet
     const sheets = google.sheets({ version: 'v4', auth: getAuth() })
@@ -80,7 +113,7 @@ export async function POST(request: NextRequest) {
           firstLabel,
           secondLabel,
           statement,
-          resumeLink,
+          resumeUrl,
         ]],
       },
     })
@@ -95,7 +128,7 @@ export async function POST(request: NextRequest) {
         `**年级 / Grade:** ${grade}`,
         `**第一志愿:** ${firstLabel}`,
         secondLabel ? `**第二志愿:** ${secondLabel}` : null,
-        resumeLink ? `**简历:** [查看简历](${resumeLink})` : null,
+        resumeUrl ? `**简历:** [查看简历](${resumeUrl})` : null,
       ].filter(Boolean).join('\n\n')
 
       await sendWechatNotification(sctKey, `📋 新申请 · ${name} → ${firstLabel}`, content)
