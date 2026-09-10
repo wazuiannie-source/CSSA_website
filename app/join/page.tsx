@@ -69,7 +69,6 @@ const departments = [
 ]
 
 export default function JoinPage() {
-  const [resumeFile, setResumeFile] = useState<File | null>(null)
   const [firstChoice, setFirstChoice] = useState<string | null>(null)
   const [secondChoice, setSecondChoice] = useState<string | null>(null)
   const [grade, setGrade] = useState<string | null>(null)
@@ -78,7 +77,6 @@ export default function JoinPage() {
   const [error, setError] = useState<string | null>(null)
   const [bgIndex, setBgIndex] = useState(0)
 
-  const resume = resumeFile?.name ?? null
   const selected = firstChoice
   const selectedDept = departments.find(d => d.value === firstChoice) ?? null
 
@@ -90,14 +88,14 @@ export default function JoinPage() {
     return () => clearInterval(interval)
   }, [selectedDept])
 
-  function handleResume(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (file) setResumeFile(file)
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!grade || !firstChoice) return
+    if (!grade || !firstChoice) {
+      setError(!grade
+        ? '请选择年级 · Please select your grade'
+        : '请选择第一志愿 · Please select a first choice department')
+      return
+    }
     setLoading(true)
     setError(null)
 
@@ -111,7 +109,7 @@ export default function JoinPage() {
     data.append('firstChoice', firstChoice)
     if (secondChoice) data.append('secondChoice', secondChoice)
     data.append('statement', (form.elements.namedItem('statement') as HTMLTextAreaElement).value)
-    if (resumeFile) data.append('resume', resumeFile)
+    data.append('resumeLink', (form.elements.namedItem('resumeLink') as HTMLInputElement).value)
 
     try {
       const res = await fetch('/api/apply', { method: 'POST', body: data })
@@ -314,29 +312,13 @@ export default function JoinPage() {
 
           {/* Resume */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <label style={labelStyle}>简历 · Resume <span style={{ color: 'rgba(255,255,255,0.25)', textTransform: 'none', letterSpacing: 0 }}>· Optional</span></label>
-            <label htmlFor="resume" style={{ cursor: 'pointer' }}>
-              <div style={{
-                borderRadius: '12px', padding: '28px',
-                background: resume ? 'rgba(200,151,58,0.08)' : 'rgba(255,255,255,0.03)',
-                border: `1.5px dashed ${resume ? 'rgba(200,151,58,0.5)' : 'rgba(255,255,255,0.12)'}`,
-                display: 'flex', alignItems: 'center', gap: '16px',
-              }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: 'rgba(200,151,58,0.1)', border: '1px solid rgba(200,151,58,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>
-                  {resume ? '📄' : '↑'}
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: resume ? '#E4C06A' : 'rgba(255,255,255,0.6)', marginBottom: '3px' }}>
-                    {resume ?? 'Upload Resume'}
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>PDF, DOC, or DOCX</div>
-                </div>
-                {resume && (
-                  <button type="button" onClick={(e) => { e.preventDefault(); setResumeFile(null) }} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '16px' }}>✕</button>
-                )}
-              </div>
-            </label>
-            <input id="resume" type="file" accept=".pdf,.doc,.docx" onChange={handleResume} style={{ display: 'none' }} />
+            <label style={labelStyle}>简历链接 · Resume Link <span style={{ color: 'rgba(255,255,255,0.25)', textTransform: 'none', letterSpacing: 0 }}>· Optional</span></label>
+            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', lineHeight: 1.7, marginBottom: '4px' }}>
+              请上传简历至 Google Drive 等云盘并将共享权限设为「知道链接的任何人可查看」，然后粘贴链接。
+              <br />
+              Upload your resume to Google Drive (or similar), set sharing to &quot;Anyone with the link can view,&quot; then paste the link here.
+            </div>
+            <input type="url" name="resumeLink" placeholder="https://drive.google.com/..." style={inputStyle} />
           </div>
 
           {/* Personal Statement */}

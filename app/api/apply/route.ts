@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { google } from 'googleapis'
 
 const departmentSctKeys: Record<string, string | undefined> = {
   activity:   process.env.SCTKEY_ACTIVITY,
@@ -19,13 +19,14 @@ const departmentLabels: Record<string, string> = {
   sports:     '体育部 · Sports',
 }
 
-const departmentChinese: Record<string, string> = {
-  activity:   '活动部',
-  career:     '职发部',
-  external:   '外联部',
-  operations: '运营部',
-  media:      '新媒体部',
-  sports:     '体育部',
+function getAuth() {
+  return new google.auth.GoogleAuth({
+    credentials: {
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    },
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  })
 }
 
 async function sendWechatNotification(sctKey: string, title: string, content: string) {
@@ -49,59 +50,55 @@ export async function POST(request: NextRequest) {
     const firstChoice  = formData.get('firstChoice') as string
     const secondChoice = formData.get('secondChoice') as string | null
     const statement    = formData.get('statement') as string
-    const resumeFile   = formData.get('resume') as File | null
+    const resumeLink   = ((formData.get('resumeLink') as string | null) ?? '').trim()
 
     if (!name || !major || !email || !wechat || !grade || !firstChoice || !statement) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Upload resume to Supabase Storage if provided
-    let resumeUrl: string | null = null
-    if (resumeFile && resumeFile.size > 0) {
-      const ext = resumeFile.name.split('.').pop()
-      const path = `${Date.now()}-${name.replace(/\s+/g, '_')}.${ext}`
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from('resumes')
-        .upload(path, resumeFile)
-
-      if (uploadError) throw uploadError
-
-      const { data: urlData } = supabaseAdmin.storage.from('resumes').getPublicUrl(path)
-      resumeUrl = urlData.publicUrl
+    if (resumeLink && !/^https?:\/\//i.test(resumeLink)) {
+      return Response.json({ error: '简历链接需以 http:// 或 https:// 开头 · Resume link must start with http:// or https://' }, { status: 400 })
     }
 
-    // Save application to database
-    const { error: dbError } = await supabaseAdmin.from('applications').insert({
-      name,
-      major,
-      email,
-      wechat,
-      grade,
-      first_choice: departmentChinese[firstChoice] ?? firstChoice,
-      second_choice: secondChoice ? (departmentChinese[secondChoice] ?? secondChoice) : null,
-      personal_statement: statement,
-      resume_url: resumeUrl,
-      status: 'pending',
-    })
+    const firstLabel = departmentLabels[firstChoice] ?? firstChoice
+    const secondLabel = secondChoice ? (departmentLabels[secondChoice] ?? secondChoice) : ''
 
-    if (dbError) throw dbError
+    // Append application to Google Sheet
+    const sheets = google.sheets({ version: 'v4', auth: getAuth() })
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GOOGLE_APPLICATIONS_SHEET_ID!,
+      range: `${process.env.GOOGLE_APPLICATIONS_SHEET_TAB ?? 'Sheet1'}!A:J`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: {
+        values: [[
+          new Date().toLocaleString('zh-CN', { timeZone: 'America/Los_Angeles' }),
+          name,
+          major,
+          email,
+          wechat,
+          grade,
+          firstLabel,
+          secondLabel,
+          statement,
+          resumeLink,
+        ]],
+      },
+    })
 
     // Send WeChat notification via Server酱
     const sctKey = departmentSctKeys[firstChoice]
     if (sctKey && !sctKey.startsWith('YOUR_')) {
-      const deptLabel = departmentLabels[firstChoice]
-      const secondLabel = secondChoice ? departmentLabels[secondChoice] : null
       const content = [
         `**姓名 / Name:** ${name}`,
         `**专业 / Major:** ${major}`,
         `**微信 / WeChat:** ${wechat}`,
         `**年级 / Grade:** ${grade}`,
-        `**第一志愿:** ${deptLabel}`,
+        `**第一志愿:** ${firstLabel}`,
         secondLabel ? `**第二志愿:** ${secondLabel}` : null,
-        resumeUrl ? `**简历:** [查看简历](${resumeUrl})` : null,
+        resumeLink ? `**简历:** [查看简历](${resumeLink})` : null,
       ].filter(Boolean).join('\n\n')
 
-      await sendWechatNotification(sctKey, `📋 新申请 · ${name} → ${deptLabel}`, content)
+      await sendWechatNotification(sctKey, `📋 新申请 · ${name} → ${firstLabel}`, content)
     }
 
     return Response.json({ success: true })
